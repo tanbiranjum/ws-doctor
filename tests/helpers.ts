@@ -146,6 +146,7 @@ export function makeWs(
 			bodySnippet: "",
 			timeToFirstByteMs: status ? 100 : null,
 			httpVersionUsed: "1.1",
+			originSent: null,
 			...overrides,
 		},
 	};

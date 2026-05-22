@@ -24,6 +24,12 @@ interface ProbeArgs {
 	target: Target;
 	timeoutMs?: number;
 	directOrigin?: { host: string; port: number } | null;
+	/**
+	 * Optional Origin header to send. Omitted entirely by default — a
+	 * diagnostic tool has no real origin and sending one (especially the
+	 * target host) trips strict CORS allow-lists.
+	 */
+	origin?: string | null;
 }
 
 export async function probeWsUpgrade(args: ProbeArgs): Promise<WsUpgradeResult> {
@@ -44,6 +50,7 @@ export async function probeWsUpgrade(args: ProbeArgs): Promise<WsUpgradeResult> 
 		secure: target.secure,
 		pathWithQuery: target.pathWithQuery,
 		wsKey,
+		origin: args.origin ?? null,
 	});
 
 	return new Promise<WsUpgradeResult>((resolve) => {
@@ -91,6 +98,7 @@ export async function probeWsUpgrade(args: ProbeArgs): Promise<WsUpgradeResult> 
 							? Math.round(firstByteAt - requestSentAt)
 							: null,
 					httpVersionUsed: "1.1",
+					originSent: args.origin ?? null,
 				},
 			});
 		}
@@ -216,18 +224,20 @@ function buildUpgradeRequest(args: {
 	secure: boolean;
 	pathWithQuery: string;
 	wsKey: string;
+	origin: string | null;
 }): string {
 	const isDefaultPort = (args.secure && args.port === 443) || (!args.secure && args.port === 80);
 	const hostHeader = isDefaultPort ? args.host : `${args.host}:${args.port}`;
+	const originLine = args.origin ? `Origin: ${args.origin}\r\n` : "";
 	return (
 		`GET ${args.pathWithQuery} HTTP/1.1\r\n` +
 		`Host: ${hostHeader}\r\n` +
-		`User-Agent: ws-doctor/0.1.0\r\n` +
+		`User-Agent: ws-doctor/0.1.3\r\n` +
 		`Upgrade: websocket\r\n` +
 		`Connection: Upgrade\r\n` +
 		`Sec-WebSocket-Version: 13\r\n` +
 		`Sec-WebSocket-Key: ${args.wsKey}\r\n` +
-		`Origin: https://${args.host}\r\n` +
+		originLine +
 		`\r\n`
 	);
 }

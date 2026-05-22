@@ -1,6 +1,6 @@
 {
   "name": "ws-doctor",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Diagnose WebSocket connection failures across DNS, TLS, HTTP, proxy, and application layers — tells you where your wss:// is dying and why.",
   "type": "module",
   "main": "./dist/index.js",

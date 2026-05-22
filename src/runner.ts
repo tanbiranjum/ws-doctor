@@ -86,6 +86,7 @@ export async function run(options: RunnerOptions): Promise<RunResult> {
 		target: options.target,
 		timeoutMs: options.timeoutMs,
 		directOrigin: options.directOrigin,
+		origin: options.origin ?? null,
 	});
 	trace.probes.wsUpgrade = wsUpgrade;
 

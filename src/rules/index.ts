@@ -11,11 +11,13 @@ import { reverseProxyRules } from "./reverse-proxy.js";
 import { runtimeBugRules } from "./runtime-bugs.js";
 import { authRules } from "./auth.js";
 import { tlsRules } from "./tls-and-cert.js";
+import { socketioRules } from "./socketio.js";
 
 export const allRules: Rule[] = [
 	...tlsRules,
 	...wrongHostRules,
 	...cloudflareRules,
+	...socketioRules,
 	...reverseProxyRules,
 	...runtimeBugRules,
 	...authRules,

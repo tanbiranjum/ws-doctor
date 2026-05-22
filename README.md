@@ -29,6 +29,9 @@ ws-doctor <url> [options]
 Options:
   -t, --timeout <ms>     per-probe timeout (default: 10000)
   --direct <host:port>   bypass DNS and connect to a specific origin
+  --origin <url>         send an Origin header on the WS upgrade (omitted by
+                         default; useful when the server requires it or you
+                         want to test as a specific frontend)
   -v, --verbose          show full probe details
   --no-color             disable colored output
   -V, --version
@@ -94,6 +97,7 @@ Each rule is a self-contained "if this trace fingerprint matches, here's the lik
 - `tls.handshake-failed` — TLS handshake failed
 - `runtime.bun-bundler-target-node` — Possible [Bun #9882](https://github.com/oven-sh/bun/issues/9882) bug when bundling with `target: "node"`
 - `auth.close-after-open` — WS connected but server may be rejecting unauthenticated clients
+- `socketio.cors-likely-rejecting` — When testing a Socket.IO target with `--origin`, polling works but WS upgrade gets 5xx → the server's CORS allow-list probably doesn't include your origin
 
 ## Contributing a rule
 

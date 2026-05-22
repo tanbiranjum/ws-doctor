@@ -21,6 +21,7 @@ interface CliOptions {
 	verbose: boolean;
 	color: boolean;
 	direct?: string;
+	origin?: string;
 }
 
 const program = new Command();
@@ -50,9 +51,13 @@ program
 		"--direct <host:port>",
 		"bypass DNS and connect to a specific origin (useful for testing behind CDNs)",
 	)
+	.option(
+		"--origin <url>",
+		"send an Origin header on the WS upgrade (omitted by default; set this if the server's CORS allow-list requires a specific frontend origin)",
+	)
 	.option("-v, --verbose", "show full probe details", false)
 	.option("--no-color", "disable colored output")
-	.version("0.1.0", "-V, --version", "print the version")
+	.version("0.1.3", "-V, --version", "print the version")
 	.showHelpAfterError()
 	.action(async (url: string, options: CliOptions) => {
 		const target = parseTarget(url);
@@ -76,6 +81,7 @@ program
 			timeoutMs: options.timeout,
 			directOrigin,
 			verbose: options.verbose,
+			origin: options.origin ?? null,
 		});
 
 		process.stdout.write(

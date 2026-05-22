@@ -172,6 +172,58 @@ describe("rules — TLS cert mismatch", () => {
 	});
 });
 
+describe("rules — Socket.IO CORS rejection", () => {
+	it("fires when polling works, ws gets 502, AND we sent an Origin", () => {
+		const trace = makeTrace({
+			dns: makeDns("unknown"),
+			libraryDetect: makeLibrary("socket.io"),
+			polling: makePolling(true),
+			wsUpgrade: makeWs("rejected", {
+				responseStatus: 502,
+				originSent: "https://stage-api.example.com",
+			}),
+		});
+		const diagnoses = runRules(trace, allRules);
+		expect(diagnoses.map((d) => d.rule.id)).toContain(
+			"socketio.cors-likely-rejecting",
+		);
+	});
+
+	it("does NOT fire when no Origin was sent", () => {
+		const trace = makeTrace({
+			dns: makeDns("unknown"),
+			libraryDetect: makeLibrary("socket.io"),
+			polling: makePolling(true),
+			wsUpgrade: makeWs("rejected", {
+				responseStatus: 502,
+				originSent: null,
+			}),
+		});
+		const diagnoses = runRules(trace, allRules);
+		expect(diagnoses.map((d) => d.rule.id)).not.toContain(
+			"socketio.cors-likely-rejecting",
+		);
+		// Still fires the upstream-unreachable rule (legitimate 502)
+		expect(diagnoses.map((d) => d.rule.id)).toContain(
+			"reverse-proxy.upstream-unreachable",
+		);
+	});
+
+	it("does NOT fire on non-Socket.IO targets", () => {
+		const trace = makeTrace({
+			libraryDetect: makeLibrary("raw-ws"),
+			wsUpgrade: makeWs("rejected", {
+				responseStatus: 502,
+				originSent: "https://example.com",
+			}),
+		});
+		const diagnoses = runRules(trace, allRules);
+		expect(diagnoses.map((d) => d.rule.id)).not.toContain(
+			"socketio.cors-likely-rejecting",
+		);
+	});
+});
+
 describe("rules — happy path", () => {
 	it("only auth hint fires when everything succeeds", () => {
 		const trace = makeTrace({

@@ -149,6 +149,8 @@ export interface WsUpgradeResult extends ProbeBase {
 		timeToFirstByteMs: number | null;
 		/** Was this attempted over HTTP/1.1? (we only do 1.1 in v0.1) */
 		httpVersionUsed: "1.1";
+		/** What Origin header (if any) was sent. Rules use this to detect CORS-rejection patterns. */
+		originSent: string | null;
 	};
 }
 
@@ -218,6 +220,11 @@ export interface RunnerOptions {
 	timeoutMs: number;
 	directOrigin: { host: string; port: number } | null;
 	verbose: boolean;
+	/**
+	 * Origin header value to send on the WS upgrade. Null/undefined = omit
+	 * entirely (default, friendliest for CORS-strict servers).
+	 */
+	origin?: string | null;
 }
 
 export interface RunResult {

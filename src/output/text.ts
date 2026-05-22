@@ -22,7 +22,7 @@ export function renderText(
 	const lines: string[] = [];
 
 	lines.push("");
-	lines.push(colors.bold(`ws-doctor`) + colors.dim(`  v0.1.0`));
+	lines.push(colors.bold(`ws-doctor`) + colors.dim(`  v0.1.3`));
 	lines.push(colors.dim(`Target: `) + trace.target.rawUrl);
 	if (trace.directOrigin) {
 		lines.push(
