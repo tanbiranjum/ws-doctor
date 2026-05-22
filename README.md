@@ -8,21 +8,6 @@ Most WebSocket testing tools just confirm that the connection failed. `ws-doctor
 npx ws-doctor wss://your.app/socket.io/
 ```
 
-## Why this exists
-
-A real conversation from production debugging:
-
-> "WebSocket isn't working on Cloudflare Free."
-> "Yes it is, WebSockets are free on every Cloudflare plan."
-> "Then is it Traefik?"
-> "Polling works, so probably not the reverse proxy..."
-> "Bun bug?"
-> "Maybe. Let's check the bundler config."
-
-It took **hours** of layered probing to figure out the answer (`Bun.build({ target: "node" })` was emitting a broken `node:http` shim). Polling worked. WebSocket upgrade silently hung. Three different agents gave three different wrong answers.
-
-This tool encodes the diagnostic ladder into 60 seconds of automated checks.
-
 ## Install
 
 ```bash
