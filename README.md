@@ -34,7 +34,7 @@ npm install -g ws-doctor
 ws-doctor wss://your.app/socket.io/
 ```
 
-Requires Node.js 18+.
+Requires Node.js 20+.
 
 ## Usage
 
